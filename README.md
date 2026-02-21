@@ -371,7 +371,7 @@ Avec certificat CA installé :
 
 
 
-# Mini-rapport d’analyse — Interception HTTP/HTTPS en environnement de labo
+# 9. Mini-rapport d’analyse — Interception HTTP/HTTPS en environnement de labo
 
 ---
 
@@ -387,12 +387,12 @@ Avec certificat CA installé :
 ## 2. Configuration du test
 
 - Outil : Burp Suite Community Edition
-- Version : <VERSION_BURP>
-- Machine hôte (IP locale) : <IP_HOTE>
-- Port proxy : <PORT_PROXY>
+- Version : <v2026.1.4 >
+- Machine hôte (IP locale) : 10.0.2.2
+- Port proxy : 8080
 - Type de listener : Loopback only / All interfaces
-- Date : <DATE>
-- Heure : <HEURE>
+- Date : 17/2/2026
+- Heure : 15:00
 - Certificat CA installé : Oui (certificat Burp dans l’émulateur)
 
 ---
@@ -402,12 +402,14 @@ Avec certificat CA installé :
 ### 3.1 Capture de l’historique HTTP
 
 Exemples de requêtes observées :
+<p align="center"> <img src="images/z12.png" width="700"> </p>
 
 ```
 GET /get HTTP/1.1
 Host: httpbin.org
 Status: 200 OK
 ```
+<p align="center"> <img src="images/zz7.png" width="700"> </p>
 
 ```
 POST /rest/user/login HTTP/2
@@ -501,45 +503,5 @@ Observé :
 
 ---
 
-## 6. Conclusion
 
-Le test démontre la capacité à :
 
-- Intercepter et analyser le trafic HTTP/HTTPS
-- Identifier les données sensibles en transit
-- Comprendre le contexte technique
-- Documenter les observations de manière reproductible
-
-Aucune vulnérabilité critique observée dans ce laboratoire.
-
----
-
-## 7. Distinction importante
-
-Ce rapport distingue clairement :
-
-### Observé
-- Requête POST vers endpoint d’authentification
-- Données JSON contenant email/password
-- Réponse 401 cohérente
-
-### Supposé
-- Mécanisme de validation serveur standard
-- Gestion session via token après succès (non observé ici)
-
-### Recommandé
-- Renforcement des cookies
-- Minimisation des données
-- Bonnes pratiques Android
-
----
-
-## Reproductibilité
-
-Toute personne disposant :
-
-- Du même lab
-- De la même configuration proxy
-- Du certificat installé
-
-peut reproduire le test en suivant les étapes décrites.
