@@ -2,51 +2,58 @@
 
 ---
 
+## 1. Preparation de BurpSuite
 
-
-<p align="center"> <img src="images/z1.png" width="300"> </p>
+### HTTP history est present 
+<p align="center"> <img src="images/z1.png" width="500"> </p>
 
 --- 
+## Intercept is off
 
-<p align="center"> <img src="images/z2.png" width="300"> </p>
-
----
-
-
-<p align="center"> <img src="images/z3.png" width="300"> </p>
+<p align="center"> <img src="images/z2.png" width="600"> </p>
 
 ---
+## 2. Checking Proxy Listener:
 
+### Port du proxy : 8080
+### Adresse d’écoute : 127.0.0.1 (Loopback only)
+<p align="center"> <img src="images/z3.png" width="600"> </p>
 
+## Interprétation
+### 127.0.0.1 (Loopback only)
+
+- Le proxy écoute uniquement sur la machine locale.
+- Utilisé lorsque le navigateur est sur la même machine que Burp.
+- Configuration adaptée pour tests locaux.
+
+### All interfaces (0.0.0.0)
+
+- Le proxy écoute sur toutes les interfaces réseau.
+- Utilisé lorsque :
+  - Un émulateur Android externe est utilisé
+  - Un appareil mobile réel est connecté
+- Nécessite configuration réseau correcte (IP locale + port).
+---
+## 3. Adresse de la machine hote :
+<IP_HOTE> : 10.0.2.2
 <p align="center"> <img src="images/z4.png" width="300"> </p>
+<p align="center"> <img src="images/z6.png" width="400"> </p>
 
 ---
 
-
+## 4. Proxy configuration :
 <p align="center"> <img src="images/z5.png" width="300"> </p>
 
 ---
 
 
-<p align="center"> <img src="images/z6.png" width="300"> </p>
-
----
 
 
-<p align="center"> <img src="images/z7.png" width="300"> </p>
-
----
-
-<p align="center"> <img src="images/z8.png" width="300"> </p>
-
----
-
-<p align="center"> <img src="images/z9.png" width="300"> </p>
----
-
-<p align="center"> <img src="images/z12.png" width="300"> </p>
-
-## Analyse du trafic HTTP dans Burp Suite
+## 5. Analyse du trafic HTTP dans Burp Suite 
+<p align="center"> <img src="images/z7.png" width="800"> </p>
+<p align="center"> <img src="images/z8.png" width="400"> </p>
+<p align="center"> <img src="images/z9.png" width="800"> </p>
+<p align="center"> <img src="images/z12.png" width="700"> </p>
 
 ### Proxy → HTTP history
 
@@ -69,10 +76,12 @@ Une ligne correspond à une requête HTTP.
 - Réponses en HTML et JSON  
 
 Cela signifie que le proxy fonctionne correctement et intercepte bien le trafic.
-<p align="center"> <img src="images/z10.png" width="300"> </p>
-<p align="center"> <img src="images/z11.png" width="300"> </p>
 
-# Analyse d’une requête HTTP interceptée (Instagram AJAX)
+
+# 6. Test 1: Analyse d’une requête HTTP interceptée (Instagram AJAX)
+
+<p align="center"> <img src="images/z10.png" width="700"> </p>
+<p align="center"> <img src="images/z11.png" width="300"> </p>
 
 - Méthode : POST
 - Endpoint : /ajax/qm/
@@ -161,25 +170,11 @@ Présence de mécanismes de durcissement modernes.
 
 ---
 
-## Conclusion
 
-La requête analysée correspond à un mécanisme interne de reporting et non à une action critique.
+# Test 2 : OWASP Juice Shop — Analyse d’une requête d’authentification (Burp Suite)
 
-Aucun élément sensible identifié dans :
-
-- Query parameters
-- Body parameters
-- Cookies
-- Headers
-
-La cible applique plusieurs protections HTTP modernes.
-
-
----
-
-<p align="center"> <img src="images/z13.png" width="300"> </p>
-
-# OWASP Juice Shop — Analyse d’une requête d’authentification (Burp Suite)
+<p align="center"> <img src="images/z13.png" width="700"> </p>
+<p align="center"> <img src="images/zz7.png" width="700"> </p>
 
 ## Contexte
 
@@ -223,11 +218,10 @@ Les headers exacts peuvent varier selon le navigateur/émulateur. Les plus impor
 - `Origin: https://demo.owasp-juice.shop`  
   Indique l’origine de la requête. Souvent utilisé côté serveur pour contrôler CSRF / CORS.
 
-- `Referer: https://demo.owasp-juice.shop/#/login` (ou similaire)  
+- `Referer: https://demo.owasp-juice.shop/#/login`   
   Page depuis laquelle la requête a été déclenchée. Utile pour la traçabilité du flux.
 
-- `Cookie: ...` (si présent)  
-  Cookies non-authentifiés possibles (langue, bannière). À vérifier si cookies de session existent déjà.
+
 
 ### Corps de la requête (body)
 
@@ -241,14 +235,17 @@ Exemple observé (format typique Juice Shop) :
 
 
 
-<p align="center"> <img src="images/zz1.png" width="300"> </p>
-<p align="center"> <img src="images/zz2.png" width="300"> </p>
-<p align="center"> <img src="images/zz3.png" width="300"> </p>
-<p align="center"> <img src="images/zz4.png" width="300"> </p>
-<p align="center"> <img src="images/zz5.png" width="300"> </p>
 
 
-# Burp Suite — Interception temporaire d’une requête HTTP
+
+# 7. Burp Suite — Interception temporaire d’une requête HTTP
+
+
+<p align="center"> <img src="images/zz1.png" width="400"> </p>
+<p align="center"> <img src="images/zz2.png" width="600"> </p>
+<p align="center"> <img src="images/zz3.png" width="600"> </p>
+<p align="center"> <img src="images/zz4.png" width="600"> </p>
+<p align="center"> <img src="images/zz5.png" width="600"> </p>
 
 ## Objectif
 
@@ -344,37 +341,12 @@ Pourquoi ?
 
 ---
 
-## Ce qu’il faut comprendre
+# 8. 
 
-Quand "Intercept is on" :
+<p align="center"> <img src="images/h1.png" width="400"> </p>
+<p align="center"> <img src="images/h2.png" width="600"> </p>
+<p align="center"> <img src="images/h3.png" width="600"> </p>
+<p align="center"> <img src="images/h4.png" width="600"> </p>
+<p align="center"> <img src="images/h5.png" width="600"> </p>
+<p align="center"> <img src="images/h6.png" width="600"> </p>
 
-- La requête est stoppée avant d’atteindre le serveur.
-- Le navigateur attend une réponse.
-- Burp agit comme point de contrôle intermédiaire.
-
-Quand "Intercept is off" :
-
-- Le trafic passe automatiquement.
-- Les requêtes sont simplement enregistrées dans HTTP history.
-
----
-
-## Points de vigilance
-
-- Ne jamais laisser l’interception activée en continu sans raison.
-- Toujours la désactiver après observation.
-- Utiliser l’interception uniquement pour analyser une séquence précise.
-
----
-
-## Conclusion
-
-L’interception permet d’observer une requête en temps réel avant son envoi.
-
-Dans ce test :
-
-- Une requête GET vers httpbin.org a été interceptée.
-- Elle est restée en attente jusqu’à validation manuelle.
-- Après "Forward", elle a été envoyée et visible dans HTTP history.
-
-Cette technique est essentielle pour comprendre le fonctionnement des requêtes HTTP et analyser les flux applicatifs.
