@@ -349,4 +349,9 @@ Pourquoi ?
 <p align="center"> <img src="images/h4.png" width="600"> </p>
 <p align="center"> <img src="images/h5.png" width="600"> </p>
 <p align="center"> <img src="images/h6.png" width="600"> </p>
+<p align="center"> <img src="images/h7.png" width="600"> </p>
+<p align="center"> <img src="images/h8.png" width="600"> </p>
+<p align="center"> <img src="images/h4.png" width="600"> </p>
+<p align="center"> <img src="images/h5.png" width="600"> </p>
+<p align="center"> <img src="images/h6.png" width="600"> </p>
 
