@@ -341,17 +341,205 @@ Pourquoi ?
 
 ---
 
-# 8. 
+# 8.  Installation du certificat dans l’émulateur Android
+- Permet d’ajouter une autorité de certification personnalisée.
+- Nécessaire pour que le navigateur fasse confiance aux certificats générés dynamiquement par Burp.
 
+
+## Compréhension du mécanisme
+
+Sans certificat CA installé :
+
+- L’émulateur ne fait pas confiance à Burp.
+- Les connexions HTTPS échouent.
+- Aucun trafic HTTPS exploitable.
+
+Avec certificat CA installé :
+
+- Le navigateur accepte les certificats générés par Burp.
+- Le trafic HTTPS devient visible dans Burp.
+- Analyse complète possible (headers, body, tokens, etc.).
+  
 <p align="center"> <img src="images/h1.png" width="400"> </p>
-<p align="center"> <img src="images/h2.png" width="600"> </p>
-<p align="center"> <img src="images/h3.png" width="600"> </p>
-<p align="center"> <img src="images/h4.png" width="600"> </p>
-<p align="center"> <img src="images/h5.png" width="600"> </p>
-<p align="center"> <img src="images/h6.png" width="600"> </p>
-<p align="center"> <img src="images/h7.png" width="600"> </p>
-<p align="center"> <img src="images/h8.png" width="600"> </p>
-<p align="center"> <img src="images/h4.png" width="600"> </p>
-<p align="center"> <img src="images/h5.png" width="600"> </p>
-<p align="center"> <img src="images/h6.png" width="600"> </p>
+<p align="center"> <img src="images/h2.png" width="400"> </p>
+<p align="center"> <img src="images/h3.png" width="400"> </p>
+<p align="center"> <img src="images/h4.png" width="400"> </p>
+<p align="center"> <img src="images/h5.png" width="400"> </p>
+<p align="center"> <img src="images/h6.png" width="400"> </p>
+<p align="center"> <img src="images/h7.png" width="400"> </p>
+<p align="center"> <img src="images/h8.png" width="400"> </p>
 
+
+
+# Mini-rapport d’analyse — Interception HTTP/HTTPS en environnement de labo
+
+---
+
+## 1. Périmètre
+
+- Environnement : Émulateur Android (laboratoire isolé)
+- Cible : Application de test autorisée (ex. OWASP Juice Shop)
+- Objectif : Observation du trafic HTTP/HTTPS sans modification
+- Nature du test : Analyse passive
+
+---
+
+## 2. Configuration du test
+
+- Outil : Burp Suite Community Edition
+- Version : <VERSION_BURP>
+- Machine hôte (IP locale) : <IP_HOTE>
+- Port proxy : <PORT_PROXY>
+- Type de listener : Loopback only / All interfaces
+- Date : <DATE>
+- Heure : <HEURE>
+- Certificat CA installé : Oui (certificat Burp dans l’émulateur)
+
+---
+
+## 3. Preuves (Evidence)
+
+### 3.1 Capture de l’historique HTTP
+
+Exemples de requêtes observées :
+
+```
+GET /get HTTP/1.1
+Host: httpbin.org
+Status: 200 OK
+```
+
+```
+POST /rest/user/login HTTP/2
+Host: demo.owasp-juice.shop
+Status: 401 Unauthorized
+```
+
+---
+
+### 3.2 Détail d’une requête analysée
+
+#### Requête :
+
+```
+POST /rest/user/login HTTP/2
+Host: demo.owasp-juice.shop
+Content-Type: application/json
+Origin: https://demo.owasp-juice.shop
+User-Agent: Mozilla/5.0 (Linux; Android ...)
+```
+
+Body :
+
+```json
+{
+  "email": "user@example.com",
+  "password": "********"
+}
+```
+
+#### Réponse :
+
+```
+HTTP/2 401 Unauthorized
+Content-Type: application/json
+```
+
+---
+
+## 4. Analyse technique
+
+### 4.1 Données observées en transit
+
+- Paramètres JSON : email, password
+- Headers : User-Agent, Origin, Referer
+- Cookies éventuels : langue, bannière, session (selon état)
+- Transport : HTTPS (TLS actif)
+
+### 4.2 Risques potentiels identifiés
+
+Observé :
+
+- Données d’authentification envoyées en JSON (normal en HTTPS).
+- Pas de données sensibles dans l’URL.
+- Statut 401 en cas d’échec → comportement cohérent.
+
+À surveiller dans un contexte réel :
+
+- Tokens présents dans l’URL (risque de fuite via logs)
+- Cookies sans attribut Secure / HttpOnly
+- Absence d’en-têtes de sécurité HTTP
+- Stockage local non sécurisé côté Android
+
+---
+
+## 5. Recommandations défensives
+
+### 5.1 Côté serveur
+
+- Utiliser HTTPS obligatoire
+- Définir cookies avec :
+  - Secure
+  - HttpOnly
+  - SameSite=Strict
+- Éviter les tokens dans les URLs
+- Implémenter rate limiting sur login
+- Masquer les messages d’erreur trop explicites
+
+### 5.2 Côté client Android
+
+- Ne pas stocker tokens en clair
+- Utiliser Android Keystore si nécessaire
+- Activer Network Security Config
+- Minimiser les données envoyées
+
+### 5.3 Minimisation des données
+
+- Ne transmettre que les champs strictement nécessaires
+- Supprimer les paramètres inutiles
+- Limiter l’exposition des identifiants techniques
+
+---
+
+## 6. Conclusion
+
+Le test démontre la capacité à :
+
+- Intercepter et analyser le trafic HTTP/HTTPS
+- Identifier les données sensibles en transit
+- Comprendre le contexte technique
+- Documenter les observations de manière reproductible
+
+Aucune vulnérabilité critique observée dans ce laboratoire.
+
+---
+
+## 7. Distinction importante
+
+Ce rapport distingue clairement :
+
+### Observé
+- Requête POST vers endpoint d’authentification
+- Données JSON contenant email/password
+- Réponse 401 cohérente
+
+### Supposé
+- Mécanisme de validation serveur standard
+- Gestion session via token après succès (non observé ici)
+
+### Recommandé
+- Renforcement des cookies
+- Minimisation des données
+- Bonnes pratiques Android
+
+---
+
+## Reproductibilité
+
+Toute personne disposant :
+
+- Du même lab
+- De la même configuration proxy
+- Du certificat installé
+
+peut reproduire le test en suivant les étapes décrites.
