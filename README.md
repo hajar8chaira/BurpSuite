@@ -342,9 +342,9 @@ Pourquoi ?
 ---
 
 # Test 3 : Intercept et modification dans HTML :
-<p align="center"> <img src="images/h1.png" width="500"> </p>
-<p align="center"> <img src="images/h2.png" width="500"> </p>
-<p align="center"> <img src="images/h3.png" width="500"> </p>
+<p align="center"> <img src="images/h1.jpeg" width="400"> </p>
+<p align="center"> <img src="images/h2.jpeg" width="900"> </p>
+<p align="center"> <img src="images/h3.jpeg" width="900"> </p>
 
 # 8.  Installation du certificat dans l’émulateur Android
 - Permet d’ajouter une autorité de certification personnalisée.
